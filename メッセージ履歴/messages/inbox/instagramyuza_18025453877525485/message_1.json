@@ -1,0 +1,24 @@
+{
+  "participants": [
+    {
+      "name": "Instagram\u00e3\u0083\u00a6\u00e3\u0083\u00bc\u00e3\u0082\u00b6\u00e3\u0083\u00bc"
+    },
+    {
+      "name": "\u00e3\u0083\u009b\u00e3\u0082\u00b9\u00e3\u0083\u0088\u00e6\u00b1\u0082\u00e4\u00ba\u00ba.com"
+    }
+  ],
+  "messages": [
+    {
+      "sender_name": "Instagram\u00e3\u0083\u00a6\u00e3\u0083\u00bc\u00e3\u0082\u00b6\u00e3\u0083\u00bc",
+      "timestamp_ms": 1729528925588,
+      "is_geoblocked_for_viewer": false,
+      "is_unsent_image_by_messenger_kid_parent": false
+    }
+  ],
+  "title": "Instagram\u00e3\u0083\u00a6\u00e3\u0083\u00bc\u00e3\u0082\u00b6\u00e3\u0083\u00bc",
+  "is_still_participant": true,
+  "thread_path": "inbox/instagramyuza_18025453877525485",
+  "magic_words": [
+    
+  ]
+}

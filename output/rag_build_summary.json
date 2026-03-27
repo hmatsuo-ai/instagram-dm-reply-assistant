@@ -1,0 +1,11 @@
+{
+  "inbox_root": "H:\\マイドライブ\\２．BCG\\２ー２．InstagramDM自動返信\\メッセージ履歴\\messages\\inbox",
+  "output_jsonl": "H:\\マイドライブ\\２．BCG\\２ー２．InstagramDM自動返信\\output\\rag_chunks.jsonl",
+  "conversations_processed": 26,
+  "chunks_written": 466,
+  "errors": 0,
+  "business_patterns": [
+    "ホスト求人",
+    "ホスト求人.com"
+  ]
+}

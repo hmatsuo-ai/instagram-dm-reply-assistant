@@ -1,0 +1,7 @@
+{
+  "business_substrings": [
+    "ホスト求人",
+    "ホスト求人.com"
+  ],
+  "comment": "sender_name にこれらの部分文字列が含まれる場合 role=business。運用アカウント名に合わせて追記する。"
+}
