@@ -1,2 +1,10 @@
-# Vercel / pip は既定で requirements.txt を参照するため、bot 用依存を委譲
--r requirements-bot.txt
+# Vercel はこのファイルを直接 pip install する。-r のネストで失敗することがあるため依存をここに列挙する。
+# ローカルでも同じファイルを使う（requirements-bot.txt は互換用）。
+fastapi>=0.109.0
+uvicorn[standard]>=0.27.0
+httpx>=0.26.0
+python-dotenv>=1.0.0
+pydantic-settings>=2.1.0
+openai>=1.12.0
+scikit-learn>=1.3.0
+numpy>=1.24.0
