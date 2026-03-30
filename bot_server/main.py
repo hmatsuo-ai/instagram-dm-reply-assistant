@@ -19,7 +19,7 @@ from contextlib import asynccontextmanager
 from typing import Any
 
 from fastapi import FastAPI, HTTPException, Request
-from fastapi.responses import PlainTextResponse
+from fastapi.responses import PlainTextResponse, RedirectResponse
 from pydantic import BaseModel, Field
 
 from .chunk_store import ChunkStore
@@ -66,6 +66,12 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(title="LINE スカウト返信支援", lifespan=lifespan)
+
+
+@app.get("/")
+async def root() -> RedirectResponse:
+    """ルートは未定義だと 404 になるため /health へ誘導（Vercel プレビュー用）。"""
+    return RedirectResponse(url="/health", status_code=307)
 
 
 @app.get("/health")
