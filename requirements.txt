@@ -1,0 +1,2 @@
+# Vercel / pip は既定で requirements.txt を参照するため、bot 用依存を委譲
+-r requirements-bot.txt

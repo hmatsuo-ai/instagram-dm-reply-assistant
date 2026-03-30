@@ -1,0 +1,12 @@
+# API 実行に不要なものをバンドルから外す（サイズ・ビルド時間の削減）
+.env
+.env.*
+メッセージ履歴/
+**/.cursor/
+**/agent-transcripts/
+**/__pycache__/
+*.pyc
+.git/
+# ランタイムでは使わない（ローカル・GAS 用）
+scripts/
+gas/

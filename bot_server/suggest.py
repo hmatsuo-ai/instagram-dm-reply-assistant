@@ -20,9 +20,11 @@ async def build_reply_text(
     replies, cited = await generate_replies(
         user_text,
         retrieved,
-        api_key=s.openai_api_key,
-        base_url=s.openai_base_url,
-        model=s.openai_model,
+        gemini_api_key=s.gemini_api_key,
+        gemini_model=s.gemini_model,
+        openai_api_key=s.openai_api_key,
+        openai_base_url=s.openai_base_url,
+        openai_model=s.openai_model,
     )
     out = "\n\n".join(replies)
     if cited:

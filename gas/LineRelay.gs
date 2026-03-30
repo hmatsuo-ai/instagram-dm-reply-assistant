@@ -1,6 +1,8 @@
 /**
  * LINE Webhook → 自営サーバ（RAG+LLM）→ replyMessage
  *
+ * 初期設定は SETUP.md（PC: RAG + Gemini API、LINE: Messaging API は GAS のスクリプトプロパティ）。
+ *
  * ■ 事前準備（スクリプト プロパティに登録・コードにベタ書きしない）
  *  エディタ: プロジェクトの設定（歯車）→「スクリプト プロパティ」で追加:
  *   LINE_CHANNEL_SECRET      … Messaging API のチャネルシークレット

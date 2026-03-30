@@ -1,9 +1,10 @@
 """
 起動例（プロジェクトルートで）:
   pip install -r requirements-bot.txt
-  copy .env.example .env
-  （推奨）INTERNAL_WEBHOOK_SECRET と OPENAI_API_KEY のみ。LINE 秘密は GAS のスクリプトプロパティ（§3.5）
-  python -m uvicorn bot_server.main:app --host 0.0.0.0 --port 8000
+  python scripts/init_env.py
+  （.env に GEMINI_API_KEY を推奨。LINE 秘密は GAS — SETUP.md）
+  python scripts/check_setup.py
+  python run_server.py
 
 本番 HTTPS はリバースプロキシ・トンネル・または TLS 終端で対応（仕様書 §3.3）。
 """
@@ -55,6 +56,12 @@ async def lifespan(app: FastAPI):
             )
     if not s.internal_webhook_secret and not s.line_channel_secret:
         logger.warning("INTERNAL_WEBHOOK_SECRET も LINE_CHANNEL_SECRET も未設定です（本番前にいずれかを設定）")
+    if s.gemini_api_key:
+        logger.info("LLM: Gemini（%s）", s.gemini_model)
+    elif s.openai_api_key:
+        logger.info("LLM: OpenAI 互換（%s）", s.openai_model)
+    else:
+        logger.warning("LLM キー未設定（GEMINI_API_KEY / OPENAI_API_KEY）— 定型フォールバックのみ")
     yield
 
 
@@ -72,7 +79,10 @@ async def health() -> dict[str, Any]:
         "direct_line_webhook_allowed": s.allow_direct_line_webhook,
         "line_secret_configured": bool(s.line_channel_secret),
         "line_token_configured": bool(s.line_channel_access_token),
-        "llm_configured": bool(s.openai_api_key),
+        "llm_configured": bool(s.gemini_api_key or s.openai_api_key),
+        "llm_provider": (
+            "gemini" if s.gemini_api_key else ("openai" if s.openai_api_key else "none")
+        ),
     }
 
 

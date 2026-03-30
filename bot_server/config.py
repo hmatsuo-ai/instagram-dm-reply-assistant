@@ -31,7 +31,11 @@ class Settings(BaseSettings):
     # カンマ区切り。空ならホワイトリスト無効（開発用）
     line_allowed_user_ids: str = ""
 
-    # OpenAI 互換（未設定時はルールベースの固定文のみ）
+    # Gemini（Google AI Studio / Vertex の API キー。設定時は OpenAI より優先）
+    gemini_api_key: Optional[str] = Field(default=None, validation_alias="GEMINI_API_KEY")
+    gemini_model: str = Field(default="gemini-2.0-flash", validation_alias="GEMINI_MODEL")
+
+    # OpenAI 互換（Gemini 未設定時のフォールバック）
     openai_api_key: Optional[str] = None
     openai_base_url: Optional[str] = None
     openai_model: str = "gpt-4o-mini"
