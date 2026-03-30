@@ -88,7 +88,7 @@ Save 後、変数を変えたら **Redeploy**。
 
 ## F. 制限メモ
 
-- **`maxDuration: 60`** はプラン上限を超えない（無料枠は短いことがある）
+- **実行時間上限**は Vercel ダッシュボード **Project → Settings → Functions** で調整（ルートの `app.py` 用の `vercel.json` の `functions` は `api/` 専用パターンと衝突するためリポジトリでは指定していない）
 - バンドルは **約 500MB 未満**に
 
 ---
