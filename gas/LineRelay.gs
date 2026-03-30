@@ -1,7 +1,8 @@
 /**
- * LINE Webhook → 自営サーバ（RAG+LLM）→ replyMessage
+ * 【任意】GAS 中継: LINE Webhook → 自営サーバ /internal/suggest-replies → GAS が replyMessage
  *
- * 初期設定は SETUP.md（PC: RAG + Gemini API、LINE: Messaging API は GAS のスクリプトプロパティ）。
+ * 標準構成では GAS は不要。LINE Webhook を直接 https://（ホスト）/webhook/line に設定する（SETUP.md）。
+ * LINE 秘密をサーバの .env に置きたくない場合のみ本スクリプトを使う。
  *
  * ■ 事前準備（スクリプト プロパティに登録・コードにベタ書きしない）
  *  エディタ: プロジェクトの設定（歯車）→「スクリプト プロパティ」で追加:

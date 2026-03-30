@@ -1,5 +1,5 @@
 """
-初期設定のチェック（GAS 中継＋自営サーバ想定）。
+初期設定チェック（標準: LINE 直接 Webhook /webhook/line。GAS 中継も判定）。
 
   プロジェクトルートで:
     python scripts/check_setup.py
@@ -31,7 +31,7 @@ def _ng(msg: str) -> None:
 
 
 def main() -> int:
-    print("初期設定チェック（推奨構成: GAS 中継）\n")
+    print("初期設定チェック\n")
 
     env_path = ROOT / ".env"
     if not env_path.is_file():
@@ -44,21 +44,32 @@ def main() -> int:
 
     exit_code = 0
 
-    if not (s.internal_webhook_secret or "").strip():
-        _ng("INTERNAL_WEBHOOK_SECRET が空（GAS から /internal/suggest-replies が使えません）")
-        exit_code = 1
+    if s.allow_direct_line_webhook:
+        _ok("ALLOW_DIRECT_LINE_WEBHOOK=true（LINE → /webhook/line）")
+        if not (s.line_channel_secret or "").strip():
+            _ng("LINE_CHANNEL_SECRET が空（直接 Webhook では必須）")
+            exit_code = 1
+        else:
+            _ok("LINE_CHANNEL_SECRET 設定済み")
+        if not (s.line_channel_access_token or "").strip():
+            _ng("LINE_CHANNEL_ACCESS_TOKEN が空（直接 Webhook では必須）")
+            exit_code = 1
+        else:
+            _ok("LINE_CHANNEL_ACCESS_TOKEN 設定済み")
     else:
-        _ok("INTERNAL_WEBHOOK_SECRET 設定済み（GAS のスクリプトプロパティと同じ値にしてください）")
+        _ok("ALLOW_DIRECT_LINE_WEBHOOK=false（/webhook/line 無効）")
+        if not (s.internal_webhook_secret or "").strip():
+            _ng("INTERNAL_WEBHOOK_SECRET が空（GAS 等から /internal/suggest-replies を使うなら必須）")
+            exit_code = 1
+        else:
+            _ok("INTERNAL_WEBHOOK_SECRET 設定済み（/internal/suggest-replies）")
+        if s.line_channel_secret or s.line_channel_access_token:
+            _warn("サーバに LINE_CHANNEL_* あり（GAS 中継のみなら通常は空）")
 
-    if not s.allow_direct_line_webhook:
-        _ok("ALLOW_DIRECT_LINE_WEBHOOK=false（GAS のみ受け口・推奨）")
-    else:
-        _warn("ALLOW_DIRECT_LINE_WEBHOOK=true（/direct webhook も有効。GAS のみにするなら .env で false）")
-
-    if not s.line_channel_secret and not s.line_channel_access_token:
-        _ok("サーバ側に LINE_CHANNEL_* なし（GAS にだけ置く構成で問題ありません）")
-    else:
-        _warn("サーバに LINE_CHANNEL_* あり（直接 /webhook/line 用。GAS のみなら空でよい）")
+    if (s.internal_webhook_secret or "").strip():
+        _ok("INTERNAL_WEBHOOK_SECRET あり（/internal/suggest-replies も利用可）")
+    elif s.allow_direct_line_webhook:
+        _warn("INTERNAL_WEBHOOK_SECRET なし（/internal/suggest-replies は無効で問題なし）")
 
     if s.gemini_api_key:
         _ok(f"GEMINI_API_KEY 設定済み（モデル: {s.gemini_model}）")
@@ -73,7 +84,7 @@ def main() -> int:
         _warn("OPENAI_API_KEY なし")
 
     if not s.gemini_api_key and not s.openai_api_key:
-        _warn("LLM キーが両方空です（定型フォールバックのみ。本番は GEMINI_API_KEY 推奨）")
+        _warn("LLM キーが両方空（定型フォールバックのみ。本番は GEMINI_API_KEY 推奨）")
 
     rag_path = s.rag_chunks_path
     if not rag_path.is_file():
@@ -86,10 +97,10 @@ def main() -> int:
             _warn(f"RAG ファイルはあるがチャンク0件: {rag_path}")
 
     print("\n--- 次のステップ ---")
-    print("1) python run_server.py（別ターミナルでトンネル等で HTTPS 公開）")
-    print("2) GET https://（公開URL）/health で rag_ready / internal_api_enabled を確認")
-    print("3) GAS: SETUP.md のスクリプトプロパティを登録し、Webhook URL を LINE に設定")
-    print("詳細: SETUP.md")
+    print("本番 URL を決め、LINE Developers の Webhook を")
+    print("  https://（公開ホスト）/webhook/line")
+    print("に設定 → Verify。GET .../health で line_secret_configured を確認。")
+    print("詳細: SETUP.md / VERCEL_DEPLOY.md")
 
     return exit_code
 

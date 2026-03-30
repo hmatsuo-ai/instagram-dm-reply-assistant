@@ -2,11 +2,11 @@
 起動例（プロジェクトルートで）:
   pip install -r requirements-bot.txt
   python scripts/init_env.py
-  （.env に GEMINI_API_KEY を推奨。LINE 秘密は GAS — SETUP.md）
+  .env に LINE_CHANNEL_* / GEMINI_API_KEY（SETUP.md）
   python scripts/check_setup.py
   python run_server.py
 
-本番 HTTPS はリバースプロキシ・トンネル・または TLS 終端で対応（仕様書 §3.3）。
+LINE Webhook URL は https://（公開ホスト）/webhook/line（GAS 不要）。
 """
 
 from __future__ import annotations
@@ -46,16 +46,16 @@ async def lifespan(app: FastAPI):
     if not store.is_ready():
         logger.warning("RAG index empty or missing. Place output/rag_chunks.jsonl or run build_rag_chunks.py")
     if s.internal_webhook_secret:
-        logger.info("POST /internal/suggest-replies 有効（Authorization: Bearer で保護）")
-    if not s.line_channel_secret:
-        if s.internal_webhook_secret:
-            logger.info("GAS 中継想定: サーバに LINE_CHANNEL_SECRET なし（問題ありません）")
+        logger.info("POST /internal/suggest-replies 有効（Authorization: Bearer で保護・任意）")
+    if s.allow_direct_line_webhook:
+        if s.line_channel_secret:
+            logger.info("直接 LINE Webhook: /webhook/line（署名検証あり）")
         else:
             logger.warning(
-                "LINE_CHANNEL_SECRET 未設定: 直接 /webhook/line 利用時は署名検証しません"
+                "ALLOW_DIRECT_LINE_WEBHOOK=true だが LINE_CHANNEL_SECRET 未設定（署名検証なし・非推奨）"
             )
-    if not s.internal_webhook_secret and not s.line_channel_secret:
-        logger.warning("INTERNAL_WEBHOOK_SECRET も LINE_CHANNEL_SECRET も未設定です（本番前にいずれかを設定）")
+    if not s.allow_direct_line_webhook and not s.internal_webhook_secret:
+        logger.warning("受信できません: ALLOW_DIRECT_LINE_WEBHOOK=false かつ INTERNAL_WEBHOOK_SECRET 空")
     if s.gemini_api_key:
         logger.info("LLM: Gemini（%s）", s.gemini_model)
     elif s.openai_api_key:
